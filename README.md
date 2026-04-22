@@ -30,25 +30,17 @@ The agent can answer product questions, detect when a user wants to sign up, col
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/<your-username>/autostream-agent.git
-cd autostream-agent
+https://github.com/Pooja389/AI_agent
+cd AI_agent
 ```
 
-### 2. Create a virtual environment
-
-```bash
-python -m venv venv
-source venv/bin/activate       # Mac/Linux
-venv\Scripts\activate          # Windows
-```
-
-### 3. Install dependencies
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Add your API key
+### 3. Add your API key
 
 ```bash
 cp .env.example .env
@@ -61,7 +53,7 @@ GROQ_API_KEY=your_key_here
 
 Get a free Groq key at → https://console.groq.com
 
-### 5. Run it
+### 4. Run it
 
 ```bash
 python agent.py
@@ -146,55 +138,7 @@ I chose **AutoGen** as an alternative — but LangGraph was the better fit here 
 
 ---
 
-## WhatsApp Deployment via Webhooks
 
-To deploy this on WhatsApp I'd use the **Meta WhatsApp Business Cloud API** with a webhook setup:
-
-**How it works:**
-1. User sends a message on WhatsApp
-2. Meta sends a POST request to my server with the message payload
-3. My server extracts the text and the sender's phone number
-4. I load that user's `AgentState` from Redis (keyed by phone number) and run the graph
-5. The agent's reply gets sent back via the Meta Send Message API
-
-**Simplified webhook handler:**
-
-```python
-from fastapi import FastAPI, Request
-import httpx, redis, json
-
-app = FastAPI()
-r = redis.Redis()
-
-@app.post("/webhook")
-async def handle_message(request: Request):
-    body = await request.json()
-    message = body["entry"][0]["changes"][0]["value"]["messages"][0]
-    phone = message["from"]
-    text  = message["text"]["body"]
-
-    # Load or create state for this user
-    raw = r.get(f"state:{phone}")
-    state = json.loads(raw) if raw else initial_state()
-    state["messages"].append({"role": "user", "content": text})
-
-    # Run the agent
-    state = agent_app.invoke(state)
-    r.setex(f"state:{phone}", 1800, json.dumps(state))  # 30 min TTL
-
-    # Send reply back
-    reply = get_last_ai_message(state)
-    await send_whatsapp_reply(phone, reply)
-    return {"status": "ok"}
-```
-
-**Key things needed:**
-- A public HTTPS URL for the webhook (can use Railway, Render, or ngrok for testing)
-- A `GET /webhook` endpoint to handle Meta's verification handshake
-- Redis to store per-user state between messages
-- The Meta `PHONE_NUMBER_ID` and `WHATSAPP_TOKEN` from the Meta Developer Portal
-
----
 
 ## Notes
 
