@@ -30,7 +30,7 @@ The agent can answer product questions, detect when a user wants to sign up, col
 ### 1. Clone the repo
 
 ```bash
-https://github.com/Pooja389/AI_agent
+git clone https://github.com/Pooja389/AI_agent
 cd AI_agent
 ```
 
