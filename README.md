@@ -4,7 +4,7 @@ Hey! This is my submission for the ServiceHive ML Intern assignment. I built a c
 
 The agent can answer product questions, detect when a user wants to sign up, collect their details step by step, and save them as a lead. Pretty cool stuff honestly.
 
-demo video link : https://youtu.be/uVoy268eU5s (click here to see how agent talks to user)
+demo video link : https://youtu.be/YVDvkYygqs0 (click here to see how agent talks to user)
 ---
 
 ## What it does
